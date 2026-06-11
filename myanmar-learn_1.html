@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>မြန်မာဘာသာ — เรียนภาษาพม่า</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;500;700&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f1a;
+  --surface: #1a1a2e;
+  --surface2: #252540;
+  --accent: #7c6ff7;
+  --accent2: #5ee8c0;
+  --accent3: #f97b6b;
+  --text: #f0efff;
+  --text2: #9b99cc;
+  --text3: #6b69a0;
+  --border: rgba(124,111,247,0.18);
+  --success: #5ee8c0;
+  --danger: #f97b6b;
+  --warn: #f7c948;
+  --r: 14px;
+  --r-sm: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Sarabun',sans-serif;font-size:16px;line-height:1.5;overflow:hidden}
+.mm{font-family:'Noto Sans Myanmar',sans-serif}
+
+/* App shell */
+#app{display:flex;flex-direction:column;height:100vh;max-width:430px;margin:0 auto;position:relative}
+#screen{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:80px;scroll-behavior:smooth}
+#screen::-webkit-scrollbar{display:none}
+
+/* Bottom nav */
+#nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 0 env(safe-area-inset-bottom,8px);z-index:100}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px;border:none;background:none;color:var(--text3);font-size:10px;font-family:'Sarabun',sans-serif;cursor:pointer;transition:color .2s}
+.nav-btn svg{width:22px;height:22px;stroke-width:1.8;fill:none;stroke:currentColor}
+.nav-btn.active{color:var(--accent)}
+.nav-btn.active svg{stroke:var(--accent)}
+
+/* Page header */
+.page-header{padding:20px 16px 0;position:sticky;top:0;background:var(--bg);z-index:10;padding-bottom:4px}
+.page-title{font-size:22px;font-weight:600;letter-spacing:-.3px}
+.page-sub{font-size:13px;color:var(--text2);margin-top:2px}
+
+/* Home page */
+.hero-card{margin:16px;background:var(--surface);border-radius:20px;padding:20px;border:1px solid var(--border);position:relative;overflow:hidden}
+.hero-card::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,rgba(124,111,247,.25) 0%,transparent 70%);pointer-events:none}
+.hero-mm{font-family:'Noto Sans Myanmar',sans-serif;font-size:32px;font-weight:700;color:var(--accent);line-height:1.2}
+.hero-th{font-size:16px;color:var(--text2);margin-top:4px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(94,232,192,.1);color:var(--accent2);border:1px solid rgba(94,232,192,.25);border-radius:999px;font-size:12px;padding:4px 12px;margin-top:12px}
+.progress-wrap{margin:0 16px 16px}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px}
+.progress-track{height:6px;background:var(--surface2);border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:999px;transition:width .5s ease}
+.section-title{font-size:12px;font-weight:500;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;padding:0 16px;margin:16px 0 10px}
+.unit-list{display:flex;flex-direction:column;gap:8px;padding:0 16px}
+.unit-item{background:var(--surface);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;border:1px solid var(--border);transition:border-color .2s,background .2s;text-decoration:none;color:inherit}
+.unit-item:active{background:var(--surface2)}
+.unit-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.unit-info{flex:1;min-width:0}
+.unit-name{font-size:15px;font-weight:500}
+.unit-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.unit-progress{font-size:12px;color:var(--text3);white-space:nowrap}
+.chevron{width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 16px}
+.stat-box{background:var(--surface);border-radius:var(--r-sm);padding:12px;text-align:center;border:1px solid var(--border)}
+.stat-num{font-size:20px;font-weight:600;color:var(--accent)}
+.stat-lbl{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* Vocab page */
+.vocab-filter{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;scrollbar-width:none}
+.vocab-filter::-webkit-scrollbar{display:none}
+.filter-btn{flex-shrink:0;padding:6px 14px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:13px;font-family:'Sarabun',sans-serif;cursor:pointer;transition:all .2s}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.vocab-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0 16px}
+.vocab-card{background:var(--surface);border-radius:var(--r);padding:16px;border:1px solid var(--border);cursor:pointer;transition:all .2s;text-align:center;user-select:none}
+.vocab-card:active{transform:scale(.97)}
+.vocab-mm{font-family:'Noto Sans Myanmar',sans-serif;font-size:22px;font-weight:500;margin-bottom:6px}
+.vocab-th{font-size:13px;color:var(--text2)}
+.vocab-cat{font-size:11px;padding:3px 8px;border-radius:999px;margin-top:8px;display:inline-block}
+.vocab-reveal{font-size:11px;color:var(--text3);margin-top:6px}
+
+/* Activity page */
+.act-tabs{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;scrollbar-width:none}
+.act-tabs::-webkit-scrollbar{display:none}
+.act-tab{flex-shrink:0;padding:7px 16px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:13px;font-family:'Sarabun',sans-serif;cursor:pointer;transition:all .2s}
+.act-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.act-content{padding:0 16px}
+
+/* Quiz */
+.quiz-card{background:var(--surface);border-radius:var(--r);padding:20px;border:1px solid var(--border);margin-bottom:12px}
+.quiz-q-mm{font-family:'Noto Sans Myanmar',sans-serif;font-size:28px;font-weight:700;color:var(--accent);text-align:center;margin-bottom:8px}
+.quiz-hint{font-size:13px;color:var(--text2);text-align:center;margin-bottom:16px}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{padding:13px 16px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-family:'Sarabun',sans-serif;cursor:pointer;text-align:left;transition:all .2s}
+.quiz-opt:active{transform:scale(.98)}
+.quiz-opt.correct{background:rgba(94,232,192,.12);border-color:var(--success);color:var(--success)}
+.quiz-opt.wrong{background:rgba(249,123,107,.12);border-color:var(--danger);color:var(--danger)}
+.quiz-progress{display:flex;gap:6px;margin-bottom:14px}
+.qp-dot{flex:1;height:4px;border-radius:999px;background:var(--surface2);transition:background .3s}
+.qp-dot.done{background:var(--accent)}
+.qp-dot.current{background:var(--accent2)}
+.result-card{background:var(--surface);border-radius:var(--r);padding:28px 20px;border:1px solid var(--border);text-align:center}
+.result-score{font-size:48px;font-weight:700;color:var(--accent)}
+.result-max{font-size:18px;color:var(--text2)}
+.result-msg{font-size:15px;color:var(--text2);margin-top:8px;margin-bottom:20px}
+
+/* Roleplay */
+.rp-scene{background:var(--surface);border-radius:var(--r);padding:16px;margin-bottom:12px;border:1px solid rgba(124,111,247,.35)}
+.rp-scene-title{font-size:13px;font-weight:500;color:var(--accent);margin-bottom:4px}
+.rp-scene-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.rp-roles{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.rp-role{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.dialogue{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.msg{display:flex;gap:8px;align-items:flex-end}
+.msg.r{flex-direction:row-reverse}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.av.th{background:rgba(94,232,192,.2);color:var(--accent2)}
+.av.mm{background:rgba(124,111,247,.2);color:var(--accent)}
+.bubble{max-width:78%;border-radius:var(--r);padding:10px 13px;font-size:13px;line-height:1.6}
+.bubble.th{background:rgba(94,232,192,.1);border:1px solid rgba(94,232,192,.2);border-bottom-left-radius:4px;color:var(--text)}
+.bubble.mm{background:rgba(124,111,247,.1);border:1px solid rgba(124,111,247,.2);border-bottom-right-radius:4px;color:var(--text);text-align:right}
+.bsub{font-size:11px;opacity:.6;margin-top:3px;font-family:'Noto Sans Myanmar',sans-serif}
+.bsub.mm-sub{font-family:'Sarabun',sans-serif}
+
+/* Matching */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.match-col{display:flex;flex-direction:column;gap:6px}
+.match-item{padding:10px 12px;border-radius:var(--r-sm);border:1px solid var(--border);font-size:13px;cursor:pointer;text-align:center;background:var(--surface2);color:var(--text);transition:all .2s;font-family:'Noto Sans Myanmar',sans-serif}
+.match-item.th-item{font-family:'Sarabun',sans-serif}
+.match-item.sel{border-color:var(--accent);background:rgba(124,111,247,.15);color:var(--accent)}
+.match-item.matched{border-color:var(--success);background:rgba(94,232,192,.1);color:var(--success);pointer-events:none}
+.match-item.err{border-color:var(--danger);background:rgba(249,123,107,.1);color:var(--danger)}
+
+/* Bingo */
+.bingo-caller{background:var(--surface);border-radius:var(--r);padding:16px;margin-bottom:10px;border:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.bingo-called-word{font-size:18px;font-weight:600;color:var(--accent2);flex:1}
+.bingo-board{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:10px}
+.bc{border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 4px;text-align:center;cursor:pointer;background:var(--surface2);transition:all .2s;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bc:active{transform:scale(.95)}
+.bc.hit{background:rgba(94,232,192,.12);border-color:var(--success)}
+.bc.flash{background:rgba(124,111,247,.2);border-color:var(--accent)}
+.bc-mm{font-family:'Noto Sans Myanmar',sans-serif;font-size:13px;font-weight:500;color:var(--text)}
+.bc-th{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* Feedback toast */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 18px;font-size:13px;color:var(--text);opacity:0;transition:all .3s;pointer-events:none;z-index:200;white-space:nowrap;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:var(--success);color:var(--success)}
+.toast.err{border-color:var(--danger);color:var(--danger)}
+
+/* Buttons */
+.btn-primary{width:100%;padding:14px;border-radius:var(--r);background:var(--accent);color:#fff;font-size:15px;font-weight:500;font-family:'Sarabun',sans-serif;border:none;cursor:pointer;transition:opacity .2s;margin-top:12px}
+.btn-primary:active{opacity:.85}
+.btn-secondary{padding:10px 20px;border-radius:var(--r-sm);background:var(--surface2);color:var(--text);font-size:13px;font-family:'Sarabun',sans-serif;border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.btn-secondary:active{background:var(--surface)}
+.inline-btns{display:flex;gap:8px;margin-top:10px}
+
+/* Profile page */
+.profile-header{margin:16px;background:var(--surface);border-radius:var(--r);padding:20px;border:1px solid var(--border);text-align:center}
+.profile-avatar{width:64px;height:64px;border-radius:50%;background:rgba(124,111,247,.2);border:2px solid var(--accent);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--accent)}
+.profile-name{font-size:18px;font-weight:600}
+.profile-role{font-size:13px;color:var(--text2);margin-top:2px}
+.achievement-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px;margin-bottom:16px}
+.ach-item{background:var(--surface);border-radius:var(--r-sm);padding:12px 8px;text-align:center;border:1px solid var(--border)}
+.ach-icon{font-size:22px;margin-bottom:4px}
+.ach-label{font-size:11px;color:var(--text2)}
+.menu-list{padding:0 16px;display:flex;flex-direction:column;gap:6px}
+.menu-item{background:var(--surface);border-radius:var(--r-sm);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;border:1px solid var(--border)}
+.menu-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.menu-label{font-size:14px;flex:1}
+.menu-arrow{width:14px;height:14px;stroke:var(--text3);fill:none;stroke-width:2}
+
+/* Utility */
+.fb-msg{padding:10px 14px;border-radius:var(--r-sm);font-size:13px;margin-top:8px;text-align:center}
+.fb-msg.ok{background:rgba(94,232,192,.1);border:1px solid rgba(94,232,192,.3);color:var(--success)}
+.fb-msg.err{background:rgba(249,123,107,.1);border:1px solid rgba(249,123,107,.3);color:var(--danger)}
+.spacer{height:12px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="screen"></div>
+  <nav id="nav">
+    <button class="nav-btn active" onclick="goPage('home',this)" aria-label="หน้าหลัก">
+      <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+      หน้าหลัก
+    </button>
+    <button class="nav-btn" onclick="goPage('vocab',this)" aria-label="คำศัพท์">
+      <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 10h8M8 14h5"/></svg>
+      คำศัพท์
+    </button>
+    <button class="nav-btn" onclick="goPage('activity',this)" aria-label="กิจกรรม">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5l5 3-5 3V9.5z"/></svg>
+      กิจกรรม
+    </button>
+    <button class="nav-btn" onclick="goPage('profile',this)" aria-label="โปรไฟล์">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      โปรไฟล์
+    </button>
+  </nav>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = {
+  vocab: [
+    {mm:'မင်္ဂလာပါ',th:'สวัสดี',cat:'greet',color:'#7c6ff7'},
+    {mm:'ကျေးဇူးတင်ပါတယ်',th:'ขอบคุณ',cat:'greet',color:'#7c6ff7'},
+    {mm:'ဟုတ်ကဲ့',th:'ใช่ครับ/ค่ะ',cat:'greet',color:'#7c6ff7'},
+    {mm:'နားလည်ပါတယ်',th:'เข้าใจแล้ว',cat:'greet',color:'#7c6ff7'},
+    {mm:'တွေ့ရတာ ဝမ်းသာတယ်',th:'ยินดีที่รู้จัก',cat:'greet',color:'#7c6ff7'},
+    {mm:'ရပ်ပါ',th:'หยุด',cat:'safety',color:'#f97b6b'},
+    {mm:'သတိထားပါ',th:'ระวัง',cat:'safety',color:'#f97b6b'},
+    {mm:'ကူညီပါ',th:'ช่วยด้วย',cat:'safety',color:'#f97b6b'},
+    {mm:'မီးသတ်',th:'ดับเพลิง',cat:'safety',color:'#f97b6b'},
+    {mm:'ထွက်ပြေးပါ',th:'วิ่งออกไป',cat:'safety',color:'#f97b6b'},
+    {mm:'PPE ဝတ်ဆင်ပါ',th:'สวม PPE',cat:'safety',color:'#f97b6b'},
+    {mm:'မနေပါနဲ့',th:'อย่าอยู่ตรงนี้',cat:'safety',color:'#f97b6b'},
+    {mm:'စစ်ဆေးပါ',th:'ตรวจสอบ',cat:'work',color:'#5ee8c0'},
+    {mm:'ပြုပြင်ရေး',th:'ซ่อมบำรุง',cat:'work',color:'#5ee8c0'},
+    {mm:'အချိန်ပို',th:'ทำงานล่วงเวลา',cat:'work',color:'#5ee8c0'},
+    {mm:'နှေးသွားပါ',th:'ช้าลง',cat:'work',color:'#5ee8c0'},
+    {mm:'မြန်မြန်',th:'เร็วขึ้น',cat:'work',color:'#5ee8c0'},
+    {mm:'နားနေပါ',th:'พักก่อน',cat:'work',color:'#5ee8c0'},
+    {mm:'နေမကောင်းဘူး',th:'ไม่สบาย',cat:'health',color:'#f7c948'},
+    {mm:'ဆရာဝန်',th:'แพทย์',cat:'health',color:'#f7c948'},
+    {mm:'ဆေးရုံ',th:'โรงพยาบาล',cat:'health',color:'#f7c948'},
+    {mm:'နာကျင်သည်',th:'เจ็บปวด',cat:'health',color:'#f7c948'},
+    {mm:'ခေါင်းကိုက်တယ်',th:'ปวดหัว',cat:'health',color:'#f7c948'},
+    {mm:'ဖျားနာတယ်',th:'เป็นไข้',cat:'health',color:'#f7c948'},
+  ],
+  units: [
+    {id:'u1',name:'ทักทายและแนะนำตัว',sub:'4 บทเรียน',icon:'👋',color:'rgba(124,111,247,.2)',lessons:4},
+    {id:'u2',name:'ตัวเลขและเวลา',sub:'4 บทเรียน',icon:'🕐',color:'rgba(94,232,192,.2)',lessons:4},
+    {id:'u3',name:'ภาษาหน้างาน',sub:'5 บทเรียน',icon:'🏭',color:'rgba(249,123,107,.2)',lessons:5},
+    {id:'u4',name:'สุขภาพและการลา',sub:'4 บทเรียน',icon:'🏥',color:'rgba(247,201,72,.2)',lessons:4},
+  ],
+  quiz: [
+    {mm:'ကျေးဇူးတင်ပါတယ်',opts:['สวัสดี','ขอบคุณ','ขอโทษ','ลาก่อน'],ans:1},
+    {mm:'ရပ်ပါ',opts:['ระวัง','ช่วยด้วย','หยุด','เดินหน้า'],ans:2},
+    {mm:'နေမကောင်းဘူး',opts:['ขอลางาน','ไม่สบาย','หิว','เหนื่อย'],ans:1},
+    {mm:'မီးသတ်',opts:['ดับเพลิง','ออกซิเจน','น้ำ','แก๊ส'],ans:0},
+    {mm:'နားလည်ပါတယ်',opts:['ไม่รู้','เห็นด้วย','เข้าใจแล้ว','ขอโทษ'],ans:2},
+    {mm:'ဆရာဝန်',opts:['พยาบาล','แพทย์','ยา','โรงพยาบาล'],ans:1},
+  ],
+  scenes: [
+    {
+      title:'เริ่มกะงานตอนเช้า',
+      desc:'หัวหน้าพบพนักงานตอนเช้า เช็กว่าพร้อมทำงาน',
+      lines:[
+        {side:'th',th:'สวัสดีตอนเช้า พร้อมทำงานไหม?',mm:'မင်္ဂလာနံနက်ခင်း။ အဆင်သင့်ဖြစ်ပြီလား?'},
+        {side:'mm',th:'สวัสดีครับ พร้อมแล้วครับ',mm:'မင်္ဂလာပါ။ အဆင်သင့်ဖြစ်ပါပြီ'},
+      ],
+      q:'ถ้าพนักงานไม่สบาย ควรพูดว่า?',
+      opts:['နေမကောင်းဘူး (ไม่สบาย)','ကျေးဇူး (ขอบคุณ)','ဟုတ်ကဲ့ (ใช่)'],ans:0
+    },
+    {
+      title:'แจ้งปัญหาเครื่องจักร',
+      desc:'พนักงานพม่าพบเครื่องมีปัญหา ต้องรายงาน',
+      lines:[
+        {side:'mm',th:'หัวหน้าครับ เครื่องนี้มีปัญหา',mm:'ဆရာ၊ ဒီစက်မှာ ပြဿနာရှိပါတယ်'},
+        {side:'th',th:'หยุดเครื่องก่อน รอช่างมาดู',mm:'စက်ကို ရပ်ပါ၊ ကျွမ်းကျင်သူကိုစောင့်ပါ'},
+      ],
+      q:'ถ้าต้องการบอกให้ออกจากพื้นที่ อย่างเร่งด่วน?',
+      opts:['ထွက်ပြေးပါ (วิ่งออก)','ခဏနေပါ (รอก่อน)','ဝင်ပါ (เข้ามา)'],ans:0
+    },
+    {
+      title:'ขอลาป่วย',
+      desc:'พนักงานไม่สบาย ต้องการขอหยุดงานวันนี้',
+      lines:[
+        {side:'mm',th:'ผมไม่สบายครับ ขอลาหยุดได้ไหมครับ',mm:'ကျွန်တော် နေမကောင်းဘူး၊ ခွင့်ယူလို့ ရနိုင်မလား?'},
+        {side:'th',th:'ได้เลย พักผ่อนให้หาย',mm:'ရပါတယ်။ နားပြီး ပျောက်အောင်'},
+      ],
+      q:'ถ้าปวดหัวควรพูดว่า?',
+      opts:['ခေါင်းကိုက်တယ် (ปวดหัว)','ဝမ်းနည်း (เสียใจ)','မောတယ် (เหนื่อย)'],ans:0
+    },
+  ],
+  bingo: [
+    {mm:'ရပ်ပါ',th:'หยุด'},{mm:'မီးသတ်',th:'ดับเพลิง'},{mm:'သတိထားပါ',th:'ระวัง'},{mm:'ကူညီပါ',th:'ช่วยด้วย'},
+    {mm:'မင်္ဂလာပါ',th:'สวัสดี'},{mm:'ကျေးဇူး',th:'ขอบคุณ'},{mm:'နေမကောင်း',th:'ไม่สบาย'},{mm:'ဆရာဝန်',th:'แพทย์'},
+    {mm:'စစ်ဆေးပါ',th:'ตรวจสอบ'},{mm:'ပြုပြင်',th:'ซ่อม'},{mm:'နားနေ',th:'พัก'},{mm:'ရောက်ပြီ',th:'มาแล้ว'},
+    {mm:'နားလည်',th:'เข้าใจ'},{mm:'မသိဘူး',th:'ไม่รู้'},{mm:'ဟုတ်ကဲ့',th:'ใช่'},{mm:'မဟုတ်ဘူး',th:'ไม่ใช่'},
+  ],
+  match: [
+    {mm:'ရပ်ပါ',th:'หยุด'},{mm:'သတိထားပါ',th:'ระวัง'},
+    {mm:'ကူညီပါ',th:'ช่วยด้วย'},{mm:'မီးသတ်',th:'ดับเพลิง'},
+  ]
+};
+
+let state = {
+  page: 'home',
+  progress: 25,
+  vocabFilter: 'all',
+  quizIdx: 0,
+  quizScore: 0,
+  quizAnswered: false,
+  actTab: 'quiz',
+  rpScene: 0,
+  rpScore: 0,
+  matchSel: null,
+  matchDone: new Set(),
+  bingoHit: new Set(),
+  bingoCalled: [],
+  learnedVocab: new Set(),
+  streak: 3,
+};
+
+function toast(msg, type='ok', dur=2000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.className = 'toast', dur);
+}
+
+function goPage(page, btn) {
+  state.page = page;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  render();
+}
+
+function render() {
+  const s = document.getElementById('screen');
+  const pages = {home: renderHome, vocab: renderVocab, activity: renderActivity, profile: renderProfile};
+  s.innerHTML = (pages[state.page] || renderHome)();
+  bindEvents();
+  document.getElementById('screen').scrollTop = 0;
+}
+
+function renderHome() {
+  const catLabel = {all:'ทั้งหมด',greet:'ทักทาย',safety:'ความปลอดภัย',work:'งาน',health:'สุขภาพ'};
+  return `
+  <div class="page-header">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div class="page-title">မြန်မာ<span style="color:var(--text2);font-size:16px;font-weight:400"> ภาษาพม่า</span></div>
+        <div class="page-sub">ยินดีต้อนรับสู่บทเรียน</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:20px;font-weight:600;color:var(--warn)">${state.streak}</div>
+        <div style="font-size:11px;color:var(--text3)">วันต่อเนื่อง 🔥</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-card" style="margin-top:16px">
+    <div class="hero-mm">မင်္ဂလာပါ</div>
+    <div class="hero-th">สวัสดี — เริ่มเรียนวันนี้กันเลย</div>
+    <div class="hero-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      เรียนได้ทุกที่ ทุกเวลา
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-num">${state.learnedVocab.size}</div>
+      <div class="stat-lbl">คำที่เรียนแล้ว</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">${state.rpScore}</div>
+      <div class="stat-lbl">คะแนน roleplay</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">4</div>
+      <div class="stat-lbl">หน่วยเรียน</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label"><span>ความคืบหน้าโดยรวม</span><span style="color:var(--accent)">${state.progress}%</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:${state.progress}%"></div></div>
+  </div>
+
+  <div class="section-title">หน่วยการเรียน</div>
+  <div class="unit-list">
+    ${DATA.units.map((u,i) => `
+    <div class="unit-item" onclick="toast('เปิดหน่วยที่ ${i+1}: ${u.name}')">
+      <div class="unit-icon" style="background:${u.color}">${u.icon}</div>
+      <div class="unit-info">
+        <div class="unit-name">${u.name}</div>
+        <div class="unit-sub">${u.sub}</div>
+      </div>
+      <div class="unit-progress">${i===0?'กำลังเรียน':i<2?'ยังไม่ได้เริ่ม':'ล็อก'}</div>
+      <svg class="chevron" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`).join('')}
+  </div>
+  <div class="spacer"></div>`;
+}
+
+function renderVocab() {
+  const cats = [{k:'all',l:'ทั้งหมด'},{k:'greet',l:'ทักทาย'},{k:'safety',l:'ความปลอดภัย'},{k:'work',l:'งาน'},{k:'health',l:'สุขภาพ'}];
+  const words = state.vocabFilter==='all' ? DATA.vocab : DATA.vocab.filter(v=>v.cat===state.vocabFilter);
+  return `
+  <div class="page-header">
+    <div class="page-title">คำศัพท์</div>
+    <div class="page-sub">${DATA.vocab.length} คำ แบ่ง 4 หมวด</div>
+  </div>
+  <div class="vocab-filter">
+    ${cats.map(c=>`<button class="filter-btn${state.vocabFilter===c.k?' active':''}" onclick="setVocabFilter('${c.k}')">${c.l}</button>`).join('')}
+  </div>
+  <div class="vocab-grid">
+    ${words.map((v,i)=>`
+    <div class="vocab-card" onclick="toggleVocab(${DATA.vocab.indexOf(v)})">
+      <div class="vocab-mm" style="color:${v.color}">${v.mm}</div>
+      <div class="vocab-th">${state.learnedVocab.has(DATA.vocab.indexOf(v))?v.th:'แตะเพื่อดู'}</div>
+      <div class="vocab-cat" style="background:${v.color}22;color:${v.color}">
+        ${{greet:'ทักทาย',safety:'ความปลอดภัย',work:'งาน',health:'สุขภาพ'}[v.cat]}
+      </div>
+    </div>`).join('')}
+  </div>
+  <div class="spacer"></div>`;
+}
+
+function renderActivity() {
+  const tabs = [{k:'quiz',l:'แบบทดสอบ'},{k:'roleplay',l:'Roleplay'},{k:'match',l:'จับคู่'},{k:'bingo',l:'บิงโก'}];
+  return `
+  <div class="page-header">
+    <div class="page-title">กิจกรรม</div>
+    <div class="page-sub">ฝึกสื่อสารหน้างาน</div>
+  </div>
+  <div class="act-tabs">
+    ${tabs.map(t=>`<button class="act-tab${state.actTab===t.k?' active':''}" onclick="setActTab('${t.k}')">${t.l}</button>`).join('')}
+  </div>
+  <div class="act-content">
+    ${state.actTab==='quiz'?renderQuiz():state.actTab==='roleplay'?renderRoleplay():state.actTab==='match'?renderMatch():renderBingo()}
+  </div>
+  <div class="spacer"></div>`;
+}
+
+function renderQuiz() {
+  if (state.quizIdx >= DATA.quiz.length) {
+    const pct = Math.round(state.quizScore/DATA.quiz.length*100);
+    return `<div class="result-card">
+      <div style="font-size:32px;margin-bottom:8px">${pct>=80?'🏆':pct>=50?'👍':'📚'}</div>
+      <div class="result-score">${state.quizScore}<span class="result-max">/${DATA.quiz.length}</span></div>
+      <div class="result-msg">${pct>=80?'ยอดเยี่ยม! สื่อสารได้ดีมาก':pct>=50?'ดีมาก! ลองฝึกอีกครั้ง':'ยังต้องฝึกเพิ่ม ทบทวนคำศัพท์ก่อนนะ'}</div>
+      <button class="btn-primary" onclick="restartQuiz()">เริ่มใหม่อีกครั้ง</button>
+    </div>`;
+  }
+  const q = DATA.quiz[state.quizIdx];
+  const dots = DATA.quiz.map((_,i)=>`<div class="qp-dot${i<state.quizIdx?' done':i===state.quizIdx?' current':''}"></div>`).join('');
+  return `
+  <div class="quiz-progress">${dots}</div>
+  <div class="quiz-card">
+    <div style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:8px">ข้อ ${state.quizIdx+1}/${DATA.quiz.length}</div>
+    <div class="quiz-q-mm">${q.mm}</div>
+    <div class="quiz-hint">คำนี้แปลว่าอะไร?</div>
+    <div class="quiz-opts">
+      ${q.opts.map((o,i)=>`<button class="quiz-opt" id="qopt${i}" onclick="answerQuiz(${i})">${o}</button>`).join('')}
+    </div>
+    <div id="qfb"></div>
+  </div>`;
+}
+
+function renderRoleplay() {
+  if (state.rpScene >= DATA.scenes.length) {
+    return `<div class="result-card">
+      <div style="font-size:32px;margin-bottom:8px">🎭</div>
+      <div class="result-score">${state.rpScore}<span class="result-max">/${DATA.scenes.length*10}</span></div>
+      <div class="result-msg">${state.rpScore>=DATA.scenes.length*8?'เก่งมาก! สื่อสารหน้างานได้ดี':state.rpScore>=DATA.scenes.length*5?'ดีมาก ฝึกต่อไป':'ลองทบทวนบทสนทนาอีกครั้ง'}</div>
+      <button class="btn-primary" onclick="state.rpScene=0;state.rpScore=0;render()">เริ่มใหม่</button>
+    </div>`;
+  }
+  const s = DATA.scenes[state.rpScene];
+  return `
+  <div class="rp-scene">
+    <div class="rp-scene-title">สถานการณ์ที่ ${state.rpScene+1} — ${s.title}</div>
+    <div class="rp-scene-desc">${s.desc}</div>
+  </div>
+  <div class="dialogue">
+    ${s.lines.map(l=>`
+    <div class="msg ${l.side==='mm'?'r':''}">
+      <div class="av ${l.side}">${l.side==='th'?'TH':'MM'}</div>
+      <div class="bubble ${l.side}">
+        <div>${l.side==='th'?l.th:l.mm}</div>
+        <div class="bsub ${l.side==='mm'?'mm-sub':''}">${l.side==='th'?l.mm:l.th}</div>
+      </div>
+    </div>`).join('')}
+  </div>
+  <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:10px">${s.q}</div>
+  <div style="display:flex;flex-direction:column;gap:7px" id="rp-opts">
+    ${s.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerRp(${i})">${o}</button>`).join('')}
+  </div>
+  <div id="rpfb"></div>
+  <div style="font-size:12px;color:var(--text3);margin-top:10px;text-align:center">คะแนน: ${state.rpScore} | สถานการณ์ ${state.rpScene+1}/${DATA.scenes.length}</div>`;
+}
+
+function renderMatch() {
+  const matched = state.matchDone.size === DATA.match.length * 2;
+  if (matched) return `<div class="result-card">
+    <div style="font-size:32px;margin-bottom:8px">🎯</div>
+    <div style="font-size:22px;font-weight:600;color:var(--success);margin-bottom:8px">จับคู่ครบแล้ว!</div>
+    <div class="result-msg">คุณจำคำศัพท์ด้านความปลอดภัยได้ครบทุกคำ</div>
+    <button class="btn-primary" onclick="state.matchSel=null;state.matchDone=new Set();render()">เล่นใหม่</button>
+  </div>`;
+
+  const shuffledTH = [...DATA.match].sort(()=>Math.random()-.5);
+  return `
+  <div style="font-size:13px;color:var(--text2);margin-bottom:10px;text-align:center">จับคู่คำพม่ากับคำไทยที่ถูกต้อง</div>
+  <div class="match-grid">
+    <div class="match-col" id="mm-col">
+      ${DATA.match.map((w,i)=>`<div class="match-item${state.matchDone.has('mm'+i)?' matched':state.matchSel&&state.matchSel.type==='mm'&&state.matchSel.i===i?' sel':''}" onclick="selectMatch('mm',${i},'${w.mm}','${w.th}')">${w.mm}</div>`).join('')}
+    </div>
+    <div class="match-col" id="th-col">
+      ${shuffledTH.map((w,i)=>{
+        const origIdx = DATA.match.findIndex(x=>x.th===w.th);
+        return `<div class="match-item th-item${state.matchDone.has('th'+origIdx)?' matched':state.matchSel&&state.matchSel.type==='th'&&state.matchSel.th===w.th?' sel':''}" onclick="selectMatch('th',${origIdx},'${w.mm}','${w.th}')">${w.th}</div>`;
+      }).join('')}
+    </div>
+  </div>
+  <div id="match-fb"></div>`;
+}
+
+function renderBingo() {
+  const called = state.bingoCalled.length ? DATA.bingo[state.bingoCalled[state.bingoCalled.length-1]].th : '—';
+  return `
+  <div class="bingo-caller">
+    <div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:3px">คำที่เรียก</div>
+      <div class="bingo-called-word">${called}</div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-secondary" onclick="callBingo()">เรียกคำ</button>
+      <button class="btn-secondary" onclick="state.bingoHit=new Set();state.bingoCalled=[];render()">รีเซต</button>
+    </div>
+  </div>
+  <div class="bingo-board">
+    ${DATA.bingo.map((w,i)=>`
+    <div class="bc${state.bingoHit.has(i)?' hit':''}" id="bc${i}" onclick="hitBingo(${i})">
+      <div class="bc-mm">${w.mm}</div>
+      <div class="bc-th">${w.th}</div>
+    </div>`).join('')}
+  </div>
+  <div id="bingo-fb"></div>
+  <div style="font-size:12px;color:var(--text3);margin-top:6px">คำที่เรียกแล้ว ${state.bingoCalled.length} คำ</div>`;
+}
+
+function renderProfile() {
+  return `
+  <div class="page-header">
+    <div class="page-title">โปรไฟล์</div>
+    <div class="page-sub">ความคืบหน้าของคุณ</div>
+  </div>
+  <div class="profile-header">
+    <div class="profile-avatar">พ</div>
+    <div class="profile-name">พนักงาน</div>
+    <div class="profile-role">ผู้เรียนระดับเริ่มต้น</div>
+    <div style="margin-top:14px;display:flex;justify-content:center;gap:16px">
+      <div style="text-align:center"><div style="font-size:20px;font-weight:600;color:var(--accent)">${state.streak}</div><div style="font-size:12px;color:var(--text2)">วันต่อเนื่อง</div></div>
+      <div style="text-align:center"><div style="font-size:20px;font-weight:600;color:var(--accent2)">${state.learnedVocab.size}</div><div style="font-size:12px;color:var(--text2)">คำศัพท์</div></div>
+      <div style="text-align:center"><div style="font-size:20px;font-weight:600;color:var(--warn)">${state.rpScore}</div><div style="font-size:12px;color:var(--text2)">คะแนน</div></div>
+    </div>
+  </div>
+  <div class="section-title">ความสำเร็จ</div>
+  <div class="achievement-grid">
+    <div class="ach-item"><div class="ach-icon">🌟</div><div class="ach-label">เริ่มต้น</div></div>
+    <div class="ach-item" style="opacity:.4"><div class="ach-icon">🏆</div><div class="ach-label">50 คำ</div></div>
+    <div class="ach-item" style="opacity:.4"><div class="ach-icon">🎯</div><div class="ach-label">จับคู่ 100%</div></div>
+    <div class="ach-item" style="opacity:.4"><div class="ach-icon">🔥</div><div class="ach-label">7 วันต่อเนื่อง</div></div>
+    <div class="ach-item" style="opacity:.4"><div class="ach-icon">🎭</div><div class="ach-label">Roleplay Pro</div></div>
+    <div class="ach-item" style="opacity:.4"><div class="ach-icon">📚</div><div class="ach-label">ครบหลักสูตร</div></div>
+  </div>
+  <div class="section-title">ตั้งค่า</div>
+  <div class="menu-list">
+    <div class="menu-item" onclick="toast('เปิดการแจ้งเตือน')"><div class="menu-icon" style="background:rgba(124,111,247,.15)">🔔</div><div class="menu-label">การแจ้งเตือน</div><svg class="menu-arrow" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+    <div class="menu-item" onclick="toast('เสียงเปิดอยู่')"><div class="menu-icon" style="background:rgba(94,232,192,.15)">🔊</div><div class="menu-label">เสียงและการออกเสียง</div><svg class="menu-arrow" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+    <div class="menu-item" onclick="toast('ภาษาไทย')"><div class="menu-icon" style="background:rgba(247,201,72,.15)">🌐</div><div class="menu-label">ภาษาการใช้งาน</div><svg class="menu-arrow" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+  </div>
+  <div class="spacer"></div>`;
+}
+
+function bindEvents() {}
+
+function setVocabFilter(f) { state.vocabFilter = f; render(); }
+function setActTab(t) { state.actTab = t; render(); }
+
+function toggleVocab(i) {
+  if (!state.learnedVocab.has(i)) {
+    state.learnedVocab.add(i);
+    state.progress = Math.min(100, Math.round(state.learnedVocab.size / DATA.vocab.length * 100));
+    toast('เรียนรู้แล้ว: ' + DATA.vocab[i].th, 'ok');
+  } else {
+    state.learnedVocab.delete(i);
+    toast('ซ่อนคำแล้ว', 'ok');
+  }
+  render();
+}
+
+function answerQuiz(i) {
+  if (state.quizAnswered) return;
+  state.quizAnswered = true;
+  const q = DATA.quiz[state.quizIdx];
+  const correct = i === q.ans;
+  document.querySelectorAll('.quiz-opt').forEach((b,j) => {
+    b.disabled = true;
+    if (j === q.ans) b.classList.add('correct');
+    if (j === i && !correct) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('qfb');
+  if (fb) fb.innerHTML = `<div class="fb-msg ${correct?'ok':'err'}">${correct?'✓ ถูกต้อง! +1 คะแนน':'✗ คำตอบที่ถูก: '+q.opts[q.ans]}</div>`;
+  if (correct) state.quizScore++;
+  setTimeout(() => {
+    state.quizIdx++;
+    state.quizAnswered = false;
+    render();
+  }, 1200);
+}
+
+function restartQuiz() { state.quizIdx = 0; state.quizScore = 0; state.quizAnswered = false; render(); }
+
+function answerRp(i) {
+  const s = DATA.scenes[state.rpScene];
+  const correct = i === s.ans;
+  document.querySelectorAll('#rp-opts .quiz-opt').forEach((b,j) => {
+    b.disabled = true;
+    if (j === s.ans) b.classList.add('correct');
+    if (j === i && !correct) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('rpfb');
+  if (fb) fb.innerHTML = `<div class="fb-msg ${correct?'ok':'err'}">${correct?'✓ ถูกต้อง! +10':'✗ '+s.opts[s.ans]}</div>`;
+  if (correct) state.rpScore += 10;
+  setTimeout(() => { state.rpScene++; render(); }, 1300);
+}
+
+function selectMatch(type, i, mm, th) {
+  if (state.matchDone.has(type+i)) return;
+  if (!state.matchSel) {
+    state.matchSel = {type, i, mm, th};
+    render();
+    return;
+  }
+  const prev = state.matchSel;
+  if (prev.type === type) { state.matchSel = {type, i, mm, th}; render(); return; }
+  state.matchSel = null;
+  const match = (prev.mm === mm && prev.th === th) || (prev.mm === mm) || (prev.th === th && prev.mm === mm);
+  const realMatch = prev.mm === mm;
+  if (realMatch) {
+    const mmIdx = DATA.match.findIndex(x=>x.mm===mm);
+    state.matchDone.add('mm'+mmIdx);
+    state.matchDone.add('th'+mmIdx);
+    toast('✓ ถูกต้อง! ' + th, 'ok');
+  } else {
+    toast('✗ ลองใหม่', 'err');
+  }
+  render();
+}
+
+function callBingo() {
+  const remaining = DATA.bingo.map((_,i)=>i).filter(i=>!state.bingoCalled.includes(i));
+  if (!remaining.length) { toast('เรียกครบทุกคำแล้ว!'); return; }
+  const idx = remaining[Math.floor(Math.random()*remaining.length)];
+  state.bingoCalled.push(idx);
+  const bc = document.getElementById('bc'+idx);
+  if (bc) { bc.classList.add('flash'); setTimeout(()=>bc.classList.remove('flash'),600); }
+  render();
+}
+
+function hitBingo(i) {
+  if (!state.bingoCalled.includes(i)) { toast('คำนี้ยังไม่ได้เรียก!','err'); return; }
+  state.bingoHit.add(i);
+  const rows = [[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15]];
+  const cols = [[0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15]];
+  const win = [...rows,...cols].some(line=>line.every(i=>state.bingoHit.has(i)));
+  if (win) { toast('🎉 บิงโก! ชนะแล้ว!','ok',3000); }
+  render();
+}
+
+render();
+setTimeout(() => { document.querySelector('.progress-fill') && (document.querySelector('.progress-fill').style.width = state.progress + '%'); }, 100);
+</script>
+</body>
+</html>
